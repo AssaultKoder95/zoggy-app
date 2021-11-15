@@ -1,0 +1,26 @@
+{
+  "name": "zoggy-app",
+  "version": "1.0.0",
+  "description": "this is a sample app for online ordering",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AssaultKoder95/zoggy-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AssaultKoder95/zoggy-app/issues"
+  },
+  "homepage": "https://github.com/AssaultKoder95/zoggy-app#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "joi": "^17.4.2",
+    "nodemon": "^2.0.15"
+  }
+}
