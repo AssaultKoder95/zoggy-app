@@ -1,10 +1,6 @@
-require("dotenv").config();
-
 const express = require("express");
 const app = express();
-const path = require("path");
-
-const public = path.join(__dirname, "public");
+const config = require("config");
 
 // eg of in-built middleware
 app.use(express.json());
@@ -31,6 +27,8 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Project running at port ${process.env.PORT}`);
+const PORT = config.has("App.port") ? config.get("App.port") : 5400;
+
+app.listen(PORT, () => {
+  console.log(`Project running at port ${PORT}`);
 });
