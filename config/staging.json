@@ -3,7 +3,7 @@
     "port": 8080
   },
   "Database": {
-    "url": "",
+    "url": "mongodb://localhost:27017/local",
     "pass": "",
     "user": ""
   }
