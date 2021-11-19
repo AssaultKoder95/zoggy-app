@@ -34,9 +34,9 @@ const UserSchema = new Schema({
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
+    required: true, // validator
+    unique: true, // validator
+    lowercase: true, // option
   },
   password: {
     type: String,

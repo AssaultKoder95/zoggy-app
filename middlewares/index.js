@@ -9,7 +9,7 @@ function logger(req, res, next) {
   next(); // tells your app to proceed to next step
 }
 
-function auth(req, res, next) {
+function authorizeUser(req, res, next) {
   console.log(
     `Incoming Authorization Request \nLog Time: ${new Date().toUTCString()}`
   );
@@ -18,5 +18,5 @@ function auth(req, res, next) {
 
 module.exports = {
   logger,
-  auth,
+  authorizeUser,
 };

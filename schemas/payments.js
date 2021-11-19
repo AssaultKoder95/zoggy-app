@@ -13,7 +13,13 @@ const PaymentSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    // will be a reference to Order Schema
     orderId: {
+      type: String,
+      required: true,
+    },
+    // will be a reference to User Schema ( not embedded document : pure reference )
+    userId: {
       type: String,
       required: true,
     },

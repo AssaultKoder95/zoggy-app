@@ -11,7 +11,10 @@ const removeProjections = {
 };
 
 Router.get("/", async (req, res) => {
-  const allPayments = await PaymentsModel.find({}, removeProjections);
+  const allPayments = await PaymentsModel.find(
+    { userId: req.user.userId, status: "In progress" },
+    removeProjections
+  );
 
   return res.json(allPayments);
 });
@@ -20,8 +23,11 @@ Router.get("/:paymentId", async (req, res) => {
   try {
     const paymentId = req.params.paymentId;
 
-    const paymentDetails = await PaymentsModel.findById(
-      paymentId,
+    const paymentDetails = await PaymentsModel.findOne(
+      {
+        id: paymentId,
+        userId: req.user.userId,
+      },
       removeProjections
     );
 
