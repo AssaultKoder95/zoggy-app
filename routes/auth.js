@@ -19,18 +19,20 @@ Router.post("/login", async (req, res) => {
     }
 
     const user = await UserModel.findOne({ email: email });
-    console.log(user);
+
     if (user) {
       // check user password with hashed password stored in the database
+      // original string password sent by user
+      // matches it against the hashed password stored in our DB
       const validPassword = await bcrypt.compare(password, user.password);
-      console.log(validPassword);
+
       if (validPassword) {
         const accessToken = generateAccessToken({
           userId: user.id,
           name: user.name,
           email: user.email,
         });
-        console.log(accessToken);
+
         return res
           .status(200)
           .json({ message: "Login Successful", accessToken });
@@ -70,7 +72,7 @@ Router.post("/signup", async (req, res) => {
         .send({ error: "Missing / invalid data", payload: req.body });
     }
 
-    // Always check in DB if entry exists / not
+    // Always check in DB if User exists / not
     const doesUserExist = await UserModel.findOne({ email }, { _id: 1 });
 
     if (doesUserExist) {
@@ -90,7 +92,10 @@ Router.post("/signup", async (req, res) => {
       password: hashedPassword,
     });
 
+    // trigger the DB call
     const savedUser = await user.save();
+
+    console.log(savedUser); // mongoose object
 
     // Sanitize the O/P data for user security
     const userDetails = {
@@ -100,7 +105,8 @@ Router.post("/signup", async (req, res) => {
       _id: undefined,
     };
 
-    return res.status(201).send(userDetails);
+    // return res.status(201); // => Resource was created successfully
+    return res.status(200).send(userDetails); // => Request was completed successfully
   } catch (error) {
     return res.json(error);
   }
