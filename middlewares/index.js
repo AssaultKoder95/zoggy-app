@@ -1,3 +1,5 @@
+const { authenticateToken } = require("../utils/jwt");
+
 function logger(req, res, next) {
   console.log(
     `Request URL: ${
@@ -8,9 +10,10 @@ function logger(req, res, next) {
 }
 
 function auth(req, res, next) {
-  // Do user authentication in this middleware
-  console.log("AUTH MIDDLEWARE CALLED");
-  next();
+  console.log(
+    `Incoming Authorization Request \nLog Time: ${new Date().toUTCString()}`
+  );
+  return authenticateToken(req, res, next);
 }
 
 module.exports = {

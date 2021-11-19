@@ -1,100 +1,81 @@
 const express = require("express");
 const Router = express.Router();
 
-const { payments } = require("../placeholder-data");
+const PaymentsModel = require("../schemas/payments");
 
-const {
-  addPaymentSchema,
-  editPaymentSchema,
-} = require("../validators/payments");
+const removeProjections = {
+  _id: 0,
+  __v: 0,
+  createdAt: 0,
+  updatedAt: 0,
+};
 
-Router.get("/", (req, res) => {
-  res.json(payments);
+Router.get("/", async (req, res) => {
+  const allPayments = await PaymentsModel.find({}, removeProjections);
+
+  return res.json(allPayments);
 });
 
-Router.get("/:paymentId", (req, res) => {
-  const paymentId = parseInt(req.params.paymentId, 10);
-
-  const paymentDetails = payments.filter(({ id }) => id === paymentId);
-
-  if (paymentDetails.length) {
-    res.json(paymentDetails[0]);
-  } else {
-    res.json({ error: "no matching payments found!!" });
-  }
-});
-
-Router.post("/", (req, res) => {
+Router.get("/:paymentId", async (req, res) => {
   try {
-    const payload = req.body;
+    const paymentId = req.params.paymentId;
 
-    const { value: paymentEntry, error } = addPaymentSchema.validate(payload);
+    const paymentDetails = await PaymentsModel.findById(
+      paymentId,
+      removeProjections
+    );
 
-    if (error.length) {
-      throw error;
-    }
-
-    // more like your DB op
-    payments.push(paymentEntry);
-
-    res.json(payments);
-  } catch (error) {
-    console.log(error);
-    res.json(error.details);
-  }
-});
-
-Router.put("/:paymentId", (req, res) => {
-  try {
-    const paymentId = parseInt(req.params.paymentId, 10);
-
-    const payload = req.body;
-
-    const { value: paymentEntry, error } = editPaymentSchema.validate(payload);
-
-    if (error) {
-      throw error;
-    }
-
-    // find whether that entry exists, if it does : proceed to delete
-    // else throw an error
-    const payment = payments.filter(({ id }) => id === paymentId);
-
-    const updatedPayment = {
-      ...payment[0],
-      ...paymentEntry,
-    };
-
-    if (payment.length) {
-      payments.splice(payment[0].id, 1, updatedPayment);
+    if (paymentDetails) {
+      return res.json(paymentDetails);
     } else {
-      throw new Error("No matching entry found!");
+      return res.json({ error: "no matching payments found!!" });
     }
+  } catch (error) {
+    return res.json(error);
+  }
+});
+
+Router.post("/", async (req, res) => {
+  try {
+    const payload = req.body;
+
+    const payment = new PaymentsModel(payload);
+    const savedPayment = await payment.save();
+
+    return res.json({ message: "successfully inserted", data: savedPayment });
+  } catch (error) {
+    return res.json(error);
+  }
+});
+
+Router.put("/:paymentId", async (req, res) => {
+  try {
+    const paymentId = req.params.paymentId;
+
+    const payload = req.body;
+
+    await PaymentsModel.findByIdAndUpdate(paymentId, payload);
 
     res.json("Successfully updated the payment");
   } catch (error) {
-    console.log(error);
     res.json(error.details);
   }
 });
 
-Router.delete("/:paymentId", (req, res) => {
+Router.delete("/:paymentId", async (req, res) => {
   try {
-    const paymentId = parseInt(req.params.paymentId, 10);
+    const paymentId = req.params.paymentId;
 
-    // find whether that entry exists, if it does : proceed to delete
-    // else throw an error
-    const payment = payments.filter(({ id }) => id === paymentId);
+    const paymentDetails = await PaymentsModel.findById(paymentId);
 
-    if (payment.length) {
-      payments.splice(payment[0].id, 1);
+    if (paymentDetails) {
+      await PaymentsModel.deleteOne({ _id: paymentId });
     } else {
       throw new Error("No matching entry found!");
     }
 
     res.json({ message: "successfully deleted entry!" });
   } catch (error) {
-    console.log(error);
     res.json(error);
   }
 });
